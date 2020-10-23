@@ -344,6 +344,61 @@ Syntax: **`awk '/pattern/ {procedure}' <file>`**
     awk: cmd. line:1:              ^ syntax error
     awk: cmd. line:1: {print $1"\n"print $2"\n"print $3}
     awk: cmd. line:1:                          ^ syntax error
+    [phunc20@tako-x60 02-basics]$ awk -F, '{print $1 "\n" $2 "\n" $3}' list
+    John Dagget
+     341 King Road
+     Plymouth MA
+    Alice Ford
+     22 East Broadway
+     Richmond VA
+    Orville Thomas
+     11345 Oak Bridge Road
+     Tulsa OK
+    Terry Kalkas
+     402 Lans Road
+     Beaver Falls PA
+    Eric Admas
+     20 Post Road
+     Sudbury MA
+    Hubert Sims
+     328A Brook Road
+     Roanoke VA
+    Amy Wilde
+     334 Bayshore Pkwy
+     Mountain View CA
+    Sal Carpenter
+     73 6th Street
+     Boston MA
+    [phunc20@tako-x60 02-basics]$ awk -F, '{print $1 \n $2 \n $3}' list
+    awk: cmd. line:1: {print $1 \n $2 \n $3}
+    awk: cmd. line:1:           ^ backslash not last character on line
+    awk: cmd. line:1: {print $1 \n $2 \n $3}
+    awk: cmd. line:1:           ^ syntax error
+    [phunc20@tako-x60 02-basics]$ awk -F, '{print "$1 \n $2 \n $3"}' list
+    $1
+     $2
+     $3
+    $1
+     $2
+     $3
+    $1
+     $2
+     $3
+    $1
+     $2
+     $3
+    $1
+     $2
+     $3
+    $1
+     $2
+     $3
+    $1
+     $2
+     $3
+    $1
+     $2
+     $3
     [phunc20@tako-x60 02-basics]$ sed -f sedscr list | awk -F, '{ print $4 }' | sort | uniq -c
           1  California
           3  Massachusetts
@@ -370,6 +425,49 @@ Syntax: **`awk '/pattern/ {procedure}' <file>`**
           1  Massachusetts
     ```
 
+## A cooler example: make a report
+Which persons are in which states?
+```bash
+[phunc20@tako-x60 02-basics]$ cat byState
+#!/bin/sh
+awk -F, '{
+        print $4 ", " $0
+        }' $* |
+sort |
+awk -F, '
+$1 == LastState {
+    print "\t" $2
+}
+$1 != LastState {
+    LastState = $1
+    print $1
+    print "\t" $2
+}'
+[phunc20@tako-x60 02-basics]$ sed -f sedscr list | byState
+-bash: byState: command not found
+[phunc20@tako-x60 02-basics]$ ll byState
+-rw-r--r-- 1 phunc20 wheel 188 Oct 23 22:22 byState
+[phunc20@tako-x60 02-basics]$ chmod +x byState
+[phunc20@tako-x60 02-basics]$ ll byState
+-rwxr-xr-x 1 phunc20 wheel 188 Oct 23 22:22 byState
+[phunc20@tako-x60 02-basics]$ sed -f sedscr list | byState
+-bash: byState: command not found
+[phunc20@tako-x60 02-basics]$ sed -f sedscr list | ./byState
+ California
+         Amy Wilde
+ Massachusetts
+         Eric Admas
+         John Dagget
+         Sal Carpenter
+ Oklahoma
+         Orville Thomas
+ Pennsylvania
+         Terry Kalkas
+ Virginia
+         Alice Ford
+         Hubert Sims
+```
+> Note that we don't have to assign to a variable before using it (because awk variables are initialized to the empty string)
 
 ## Exercises
 01. Use `ed` to create the file `list` of names and addresses
