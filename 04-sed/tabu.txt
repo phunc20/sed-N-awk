@@ -1,0 +1,12 @@
+outsider1
+.TS
+  tabular
+
+  def
+
+.TE
+  abc
+  xyz
+.TE
+outsider2
+outsider3
