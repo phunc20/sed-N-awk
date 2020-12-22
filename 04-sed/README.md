@@ -159,3 +159,34 @@ outsider3
 [phunc20@homography-x220t 04-sed]$
 ```
 
+## Shell script looping thru input args
+Actually a simple `for x` will do the trick. That is `for x` can do what `for x in "$@"`
+```bash
+[phunc20@homography-x220t 04-sed]$ cat testsed
+for x
+do
+  sed '' $x
+done
+[phunc20@homography-x220t 04-sed]$ chmod +x testsed
+[phunc20@homography-x220t 04-sed]$ ./testsed testsed
+for x
+do
+  sed '' $x
+done
+[phunc20@homography-x220t 04-sed]$ ./testsed testsed pig_cow_horse.txt
+for x
+do
+  sed '' $x
+done
+a horse is a horse.
+cows when little seems to be called cattles.
+pigs are intelligent, but lives dirty.
+[phunc20@homography-x220t 04-sed]$ cat pig_cow_horse.txt
+a horse is a horse.
+cows when little seems to be called cattles.
+pigs are intelligent, but lives dirty.
+[phunc20@homography-x220t 04-sed]$
+```
+
+
+
